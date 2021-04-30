@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/scm-admin/scm-admin.iml" filepath="$PROJECT_DIR$/scm-admin/scm-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scm-code-generator/scm-code-generator.iml" filepath="$PROJECT_DIR$/scm-code-generator/scm-code-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/supplychainmanagement.iml" filepath="$PROJECT_DIR$/supplychainmanagement.iml" />
+    </modules>
+  </component>
+</project>
