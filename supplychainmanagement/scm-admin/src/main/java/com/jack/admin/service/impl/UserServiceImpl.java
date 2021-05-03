@@ -1,6 +1,7 @@
 package com.jack.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.jack.admin.pojo.User;
 import com.jack.admin.mapper.UserMapper;
 import com.jack.admin.service.IUserService;
@@ -37,7 +38,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User findUserByUserName(String userName) {
-        return this.baseMapper.selectOne(new QueryWrapper<User>().eq("is_del",0).eq("user_name", userName));
+        return this.baseMapper.selectOne(new QueryWrapper<User>().eq("is_del", 0).eq("user_name", userName));
     }
 
     @Override
@@ -52,5 +53,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         //3. 更新信息, 直接调用父类（MyBatis Plus的ServiceImpl）的方法
         AssertUtil.isTrue(!(this.updateById(user)), "用户信息更新失败");
+    }
+
+    @Override
+    public void updateUserPassword(String userName, String oldPassword, String newPassword, String confirmPassword) {
+        //非空检验
+        User user = null;
+        user = this.findUserByUserName(userName);
+        AssertUtil.isTrue(null==user, "此用户不存在或未登录");
+        AssertUtil.isTrue(StringUtil.isEmpty(oldPassword), "旧密码不能为空");
+        AssertUtil.isTrue(StringUtil.isEmpty(newPassword), "新密码不能为空");
+        //错误判断
+        AssertUtil.isTrue(StringUtil.isEmpty(confirmPassword),"请输入确认密码!");
+        AssertUtil.isTrue(!(user.getPassword().equals(oldPassword)),"原始密码输入错误!");
+        AssertUtil.isTrue(!(newPassword.equals(confirmPassword)),"新密码输入不一致!");
+        AssertUtil.isTrue(newPassword.equals(oldPassword),"新密码与原始密码不能一致!");
+
+        //更新密码, 直接调用父类（MyBatis Plus的ServiceImpl）的方法
+        user.setPassword(newPassword);
+        AssertUtil.isTrue(!(this.updateById(user)), "用户密码更新失败");
     }
 }

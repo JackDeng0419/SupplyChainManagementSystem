@@ -3,6 +3,8 @@ package com.jack.admin.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class MainController {
 
@@ -29,5 +31,16 @@ public class MainController {
     @RequestMapping("welcome")
     public String welcome(){
         return "welcome";
+    }
+
+    /**
+     * 用户退出
+     * @return
+     */
+    @RequestMapping("signout")
+    public String signout(HttpSession session){
+        session.removeAttribute("user");
+        //如果不写redirect，地址栏处仍然会是/signout
+        return "redirect:index";
     }
 }
