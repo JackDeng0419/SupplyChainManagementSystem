@@ -21,4 +21,6 @@ public interface IUserService extends IService<User> {
      * @return
      */
     public User findUserByUserName(String userName);
+
+    void updateUserInfo(User user);
 }

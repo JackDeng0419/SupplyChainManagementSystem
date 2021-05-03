@@ -45,4 +45,31 @@ public class UserController {
             return RespBean.error("用户登陆失败");
         }
     }
+
+    /**
+     * 用户信息设置
+     * @param session
+     * @return
+     */
+    @RequestMapping("setting")
+    public String setting(HttpSession session){
+        User user = (User) session.getAttribute("user");
+        session.setAttribute("user", userService.getById(user.getId()));
+        return "user/setting";
+    }
+
+    @RequestMapping("updateUserInfo")
+    @ResponseBody
+    public RespBean updateUserInfo(User user){
+        try {
+            userService.updateUserInfo(user);
+            return RespBean.success("更新成功");
+        } catch (ParamsException exception) {
+            exception.printStackTrace();
+            return RespBean.error(exception.getMsg());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return RespBean.error("用户更新失败");
+        }
+    }
 }
