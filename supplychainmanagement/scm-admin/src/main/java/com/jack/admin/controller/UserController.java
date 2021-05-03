@@ -32,18 +32,9 @@ public class UserController {
     @RequestMapping("login")
     @ResponseBody // return json
     public RespBean login(String userName, String password, HttpSession session){
-
-        try {
             User user = userService.login(userName, password);
             session.setAttribute("user", user);
             return RespBean.success("用户登录成功");
-        } catch (ParamsException pe) {
-            pe.printStackTrace();
-            return RespBean.error(pe.getMsg());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return RespBean.error("用户登陆失败");
-        }
     }
 
     /**
@@ -67,16 +58,8 @@ public class UserController {
     @RequestMapping("updateUserInfo")
     @ResponseBody
     public RespBean updateUserInfo(User user){
-        try {
             userService.updateUserInfo(user);
             return RespBean.success("更新成功");
-        } catch (ParamsException exception) {
-            exception.printStackTrace();
-            return RespBean.error(exception.getMsg());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return RespBean.error("用户更新失败");
-        }
     }
 
     /**
@@ -101,17 +84,9 @@ public class UserController {
     @RequestMapping("updateUserPassword")
     @ResponseBody
     public RespBean updateUserPassword(HttpSession session, String oldPassword,String newPassword,String confirmPassword){
-        try {
             User user = (User) session.getAttribute("user");
             userService.updateUserPassword(user.getUserName(), oldPassword, newPassword, confirmPassword);
             return RespBean.success("用户密码更新成功");
-        } catch (ParamsException exception) {
-            exception.printStackTrace();
-            return RespBean.error(exception.getMsg());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return RespBean.error("用户密码更新失败");
-        }
     }
 
 
