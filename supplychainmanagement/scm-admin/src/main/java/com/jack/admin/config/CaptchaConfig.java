@@ -34,6 +34,7 @@ public class CaptchaConfig {
 
     /**
      * 自定义 验证码生成器
+     *
      * @return
      */
     @Bean(name = "captchaProducer")
