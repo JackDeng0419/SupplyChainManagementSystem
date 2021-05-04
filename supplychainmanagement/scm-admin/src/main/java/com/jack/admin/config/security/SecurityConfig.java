@@ -1,6 +1,7 @@
 package com.jack.admin.config.security;
 
 
+import com.jack.admin.filters.CaptchaCodeFilter;
 import com.jack.admin.pojo.User;
 import com.jack.admin.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.annotation.Resource;
 
@@ -35,6 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private IUserService userService;
 
+    @Resource
+    private CaptchaCodeFilter captchaCodeFilter;
     /**
      * 放行静态资源
      * @param web
@@ -57,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable()
+                .addFilterBefore(captchaCodeFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers().frameOptions().disable()
                 .and()
                     .formLogin()
