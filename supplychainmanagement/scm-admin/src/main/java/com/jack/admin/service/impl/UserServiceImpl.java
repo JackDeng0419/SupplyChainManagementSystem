@@ -8,9 +8,12 @@ import com.jack.admin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.admin.utils.AssertUtil;
 import com.jack.admin.utils.StringUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -23,18 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
-    @Override
-    public User login(String userName, String password) {
-        AssertUtil.isTrue(StringUtil.isEmpty(userName), "用户名不能为空");
-        AssertUtil.isTrue(StringUtil.isEmpty(password), "密码不能为空");
-        User user = this.findUserByUserName(userName);
-        AssertUtil.isTrue(null == user, "该用户记录不存在或已注销");
-        /**
-         * 后续：使用加密代码比对, using spring security
-         */
-        AssertUtil.isTrue(!(user.getPassword().equals(password)), "密码错误");
-        return user;
-    }
+    @Resource
+    private PasswordEncoder encoder;
 
     @Override
     public User findUserByUserName(String userName) {
@@ -45,10 +38,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class) // 只要抛出异常便回滚
     public void updateUserInfo(User user) {
         //1. 账号是否为空
-        AssertUtil.isTrue(StringUtil.isEmpty(user.getUserName()), "用户名不能为空");
+        AssertUtil.isTrue(StringUtil.isEmpty(user.getUsername()), "用户名不能为空");
 
         //2. 判断账号是否唯一
-        User temp = findUserByUserName(user.getUserName());
+        User temp = findUserByUserName(user.getUsername());
         AssertUtil.isTrue(null != temp && !(temp.getId().equals(user.getId())), "用户名已存在");
 
         //3. 更新信息, 直接调用父类（MyBatis Plus的ServiceImpl）的方法
@@ -65,12 +58,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         AssertUtil.isTrue(StringUtil.isEmpty(newPassword), "新密码不能为空");
         //错误判断
         AssertUtil.isTrue(StringUtil.isEmpty(confirmPassword),"请输入确认密码!");
-        AssertUtil.isTrue(!(user.getPassword().equals(oldPassword)),"原始密码输入错误!");
+        AssertUtil.isTrue(!(encoder.matches(oldPassword, user.getPassword())),"原始密码输入错误!");
         AssertUtil.isTrue(!(newPassword.equals(confirmPassword)),"新密码输入不一致!");
         AssertUtil.isTrue(newPassword.equals(oldPassword),"新密码与原始密码不能一致!");
 
         //更新密码, 直接调用父类（MyBatis Plus的ServiceImpl）的方法
-        user.setPassword(newPassword);
+        user.setPassword(encoder.encode(newPassword));
         AssertUtil.isTrue(!(this.updateById(user)), "用户密码更新失败");
     }
 }

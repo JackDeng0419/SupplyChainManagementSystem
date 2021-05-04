@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Parameter;
+import java.security.Principal;
 
 /**
  * <p>
@@ -29,13 +30,13 @@ public class UserController {
     @Resource
     private IUserService userService;
 
-    @RequestMapping("login")
-    @ResponseBody // return json
-    public RespBean login(String userName, String password, HttpSession session){
-            User user = userService.login(userName, password);
-            session.setAttribute("user", user);
-            return RespBean.success("用户登录成功");
-    }
+//    @RequestMapping("login")
+//    @ResponseBody // return json
+//    public RespBean login(String userName, String password, HttpSession session){
+//            User user = userService.login(userName, password);
+//            session.setAttribute("user", user);
+//            return RespBean.success("用户登录成功");
+//    }
 
     /**
      * 显示用户信息设置界面
@@ -75,7 +76,7 @@ public class UserController {
 
     /**
      * 修改用户密码
-     * @param session
+     * @param principal
      * @param oldPassword
      * @param newPassword
      * @param confirmPassword
@@ -83,9 +84,8 @@ public class UserController {
      */
     @RequestMapping("updateUserPassword")
     @ResponseBody
-    public RespBean updateUserPassword(HttpSession session, String oldPassword,String newPassword,String confirmPassword){
-            User user = (User) session.getAttribute("user");
-            userService.updateUserPassword(user.getUserName(), oldPassword, newPassword, confirmPassword);
+    public RespBean updateUserPassword(Principal principal, String oldPassword, String newPassword, String confirmPassword){
+            userService.updateUserPassword(principal.getName(), oldPassword, newPassword, confirmPassword);
             return RespBean.success("用户密码更新成功");
     }
 
