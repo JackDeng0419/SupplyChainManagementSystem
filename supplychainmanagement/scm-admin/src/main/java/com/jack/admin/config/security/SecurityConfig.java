@@ -18,8 +18,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 @SpringBootConfiguration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -35,10 +38,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SmcLogoutSuccessHandler smcLogoutSuccessHandler;
 
     @Resource
+    private CaptchaCodeFilter captchaCodeFilter;
+
+
+    @Resource
     private IUserService userService;
 
     @Resource
-    private CaptchaCodeFilter captchaCodeFilter;
+    private DataSource dataSource;
+
     /**
      * 放行静态资源
      * @param web
@@ -75,11 +83,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests().antMatchers("/index", "/login", "/image").permitAll()
                     .anyRequest().authenticated()
                 .and()
+                    .rememberMe()
+                    .rememberMeParameter("rememberMe")
+                    //保存在浏览器端的cookie的名称，如果不设置默认也是remember-me
+                    .rememberMeCookieName("remember-me-cookie")
+                    //设置token的有效期，即多长时间内可以免除重复登录，单位是秒。
+                    .tokenValiditySeconds(7  * 24 * 60 * 60)
+                    //自定义
+                    .tokenRepository(persistentTokenRepository())
+                .and()
                     .logout()
                     .logoutUrl("/signout")
                     .deleteCookies("JSESSIONID")
                     .logoutSuccessHandler(smcLogoutSuccessHandler);
 
+    }
+
+
+    /**
+     * 配置从数据库中获取token
+     * @return
+     */
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository(){
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        return tokenRepository;
     }
 
     /**
