@@ -5,6 +5,7 @@ import com.jack.admin.exceptions.ParamsException;
 import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.User;
 import com.jack.admin.service.IUserService;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -40,14 +41,14 @@ public class UserController {
 
     /**
      * 显示用户信息设置界面
-     *
-     * @param session
+     * @param principal
+     * @param model
      * @return
      */
     @RequestMapping("setting")
-    public String setting(HttpSession session){
-        User user = (User) session.getAttribute("user");
-        session.setAttribute("user", userService.getById(user.getId()));
+    public String setting(Principal principal, Model model){
+        User user = userService.findUserByUserName(principal.getName());
+        model.addAttribute("user",user);
         return "user/setting";
     }
 
