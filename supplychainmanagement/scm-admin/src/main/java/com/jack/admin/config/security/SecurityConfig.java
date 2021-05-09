@@ -107,7 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PersistentTokenRepository persistentTokenRepository(){
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
-        tokenRepository.setDataSource(dataSource);
+        tokenRepository.setDataSource(dataSource); // 此处的dataSource在application.yml中定义，对应的dataSource对象由Spring IOC容器维护
         return tokenRepository;
     }
 

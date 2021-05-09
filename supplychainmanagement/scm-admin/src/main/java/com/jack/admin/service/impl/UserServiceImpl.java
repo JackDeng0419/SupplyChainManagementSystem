@@ -1,9 +1,12 @@
 package com.jack.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.jack.admin.pojo.User;
 import com.jack.admin.mapper.UserMapper;
+import com.jack.admin.query.UserQuery;
 import com.jack.admin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.admin.utils.AssertUtil;
@@ -12,8 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -65,5 +71,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         //更新密码, 直接调用父类（MyBatis Plus的ServiceImpl）的方法
         user.setPassword(encoder.encode(newPassword));
         AssertUtil.isTrue(!(this.updateById(user)), "用户密码更新失败");
+    }
+
+    @Override
+    public Map<String, Object> userList(UserQuery userQuery) {
+        // 构建页面数据结构
+        IPage<User> page = new Page<User>(userQuery.getPage(), userQuery.getLimit());
+        // 创建查询数据结构
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
+        // 只查询有效的用户
+        queryWrapper.eq("is_del",0);
+        //
+        if(!StringUtil.isEmpty(userQuery.getUserName())){
+            queryWrapper.like("user_name", userQuery.getUserName());
+        }
+
+        page = this.baseMapper.selectPage(page, queryWrapper);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("code",0);
+        map.put("msg","");
+        map.put("data", page.getRecords());
+        map.put("count",page.getTotal());
+
+        return map;
     }
 }

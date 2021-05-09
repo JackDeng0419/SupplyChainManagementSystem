@@ -2,6 +2,9 @@ package com.jack.admin.service;
 
 import com.jack.admin.pojo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jack.admin.query.UserQuery;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -23,4 +26,6 @@ public interface IUserService extends IService<User> {
     void updateUserInfo(User user);
 
     void updateUserPassword(String userName, String oldPassword, String newPassword, String confirmPassword);
+
+    Map<String, Object> userList(UserQuery userQuery);
 }

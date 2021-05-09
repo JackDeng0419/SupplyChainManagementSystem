@@ -4,7 +4,9 @@ package com.jack.admin.controller;
 import com.jack.admin.exceptions.ParamsException;
 import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.User;
+import com.jack.admin.query.UserQuery;
 import com.jack.admin.service.IUserService;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Parameter;
 import java.security.Principal;
+import java.util.Map;
 
 /**
  * <p>
@@ -90,5 +93,30 @@ public class UserController {
             return RespBean.success("用户密码更新成功");
     }
 
+    @RequestMapping("index")
+    public String index(){
+        return "user/user";
+    }
+
+
+    /**
+     * 查询用户列表
+     * @param userQuery
+     * @return
+     */
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String, Object> userList(UserQuery userQuery){
+        return userService.userList(userQuery);
+    }
+
+    @RequestMapping("addOrUpdateUserPage")
+    public String addOrUpdatePage(Integer id, Model model){
+        if (null != id){
+            // 将user对象放入session
+            model.addAttribute("user",userService.getById(id));
+        }
+        return  "user/add_update";
+    }
 
 }
