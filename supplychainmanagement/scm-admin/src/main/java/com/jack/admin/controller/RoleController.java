@@ -4,13 +4,13 @@ import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.Role;
 import com.jack.admin.query.RoleQuery;
 import com.jack.admin.service.IRoleService;
-import com.jack.admin.service.impl.RoleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 @RequestMapping("role")
@@ -36,6 +36,12 @@ public class RoleController {
     @ResponseBody
     public Map<String, Object> roleList(RoleQuery roleQuery){
         return roleService.roleList(roleQuery);
+    }
+
+    @RequestMapping("queryAllRoles")
+    @ResponseBody
+    public List<Map<String, Object>> queryAllRoles(Integer userId){
+        return roleService.queryAllRoles(userId);
     }
 
     @RequestMapping("update")

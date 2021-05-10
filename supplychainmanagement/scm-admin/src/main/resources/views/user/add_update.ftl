@@ -41,7 +41,7 @@
 
     <div class="magb15 layui-col-md4 layui-col-xs12">
         <label class="layui-form-label">角色</label>
-        <div class="layui-input-block">
+        <div class="layui-input-block" >
             <select name="roleIds"  xm-select="selectId">
             </select>
         </div>

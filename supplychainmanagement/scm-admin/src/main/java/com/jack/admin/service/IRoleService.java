@@ -4,6 +4,7 @@ import com.jack.admin.pojo.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jack.admin.query.RoleQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,4 +26,6 @@ public interface IRoleService extends IService<Role> {
     void saveRole(Role role);
 
     void deleteRole(Integer id);
+
+    List<Map<String,Object>> queryAllRoles(Integer userId);
 }

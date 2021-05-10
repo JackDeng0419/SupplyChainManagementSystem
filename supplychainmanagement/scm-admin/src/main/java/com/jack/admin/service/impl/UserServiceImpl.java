@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jack.admin.pojo.User;
 import com.jack.admin.mapper.UserMapper;
+import com.jack.admin.pojo.UserRole;
 import com.jack.admin.query.UserQuery;
+import com.jack.admin.service.IUserRoleService;
 import com.jack.admin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.admin.utils.AssertUtil;
@@ -16,10 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -34,6 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private IUserRoleService userRoleService;
 
     @Override
     public User findUserByUserName(String userName) {
@@ -112,6 +114,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setPassword(passwordEncoder.encode("123456"));
         user.setIsDel(0);
         AssertUtil.isTrue(!(this.save(user)), "用户记录添加失败");
+
+        //重新获取用户记录
+        User temp = this.findUserByUserName(user.getUsername());
+        //分配角色
+        relationUserRole(temp.getId(), user.getRoleIds());
+
+    }
+
+    /**
+     * 将用户ID与角色ID关联
+     * @param userId
+     * @param roleIds
+     */
+    private void relationUserRole(Integer userId, String roleIds) {
+        /**
+         * 当添加用户时
+         *      直接添加
+         * 当更新角色时
+         *      如果用户存在原始的角色，先把原始角色记录删除，再重新添加
+         *      如果不存在，则直接添加
+         */
+
+        // 先查询此用户id在user_role中是否有记录
+        int count = userRoleService.count(new QueryWrapper<UserRole>().eq("user_id", userId));
+        if(count>0){
+            AssertUtil.isTrue(!(userRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", userId))), "用户角色分配失败");
+        }
+        if(StringUtil.isNotEmpty(roleIds)){
+            List<UserRole> userRoles = new ArrayList<UserRole>();
+            for(String s:roleIds.split(",")) {
+                UserRole userRole = new UserRole();
+                userRole.setUserId(userId);
+                userRole.setRoleId(Integer.parseInt(s));
+                userRoles.add(userRole);
+            }
+            AssertUtil.isTrue(!(userRoleService.saveBatch(userRoles)),"用户角色分配失败");
+        }
+
     }
 
     @Override
@@ -122,6 +162,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User temp = this.findUserByUserName(user.getUsername());
         AssertUtil.isTrue(null != temp && !(temp.getId().equals(user.getId())), "用户名已存在");
 
+        relationUserRole(user.getId(), user.getRoleIds());
+
         AssertUtil.isTrue(!(this.updateById(user)), "用户记录更新失败");
     }
 
@@ -130,6 +172,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public void deleteUser(Integer[] ids) {
         // 判断参数非空
         AssertUtil.isTrue(null == ids || ids.length==0, "请选择删除的记录id");
+
+        // 删除user_role中此userID的记录
+        int count = userRoleService.count(new QueryWrapper<UserRole>().in("user_id", Arrays.asList(ids))); // 将ids转为List
+        if(count>0){
+            AssertUtil.isTrue(!(userRoleService.remove(new QueryWrapper<UserRole>().in("user_id", Arrays.asList(ids)))),"用户删除失败");
+        }
+
+        //删除user表
         List<User> users = new ArrayList<User>();
         for(Integer id : ids){
             User temp = this.getById(id);

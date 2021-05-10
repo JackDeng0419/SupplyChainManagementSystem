@@ -6,17 +6,22 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jack.admin.pojo.Role;
 import com.jack.admin.mapper.RoleMapper;
 import com.jack.admin.pojo.User;
+import com.jack.admin.pojo.UserRole;
 import com.jack.admin.query.RoleQuery;
 import com.jack.admin.service.IRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jack.admin.service.IUserRoleService;
 import com.jack.admin.utils.AssertUtil;
 import com.jack.admin.utils.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +35,8 @@ import java.util.Map;
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IRoleService {
 
+    @Autowired
+    IUserRoleService userRoleService;
 
     @Override
     public Role findRoleByRoleName(String roleName) {
@@ -90,5 +97,27 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         AssertUtil.isTrue(null == role, "待删除记录不存在");
         role.setIsDel(1);
         AssertUtil.isTrue(!(this.updateById(role)),"用户记录删除失败");
+    }
+
+    @Override
+    public List<Map<String, Object>> queryAllRoles(Integer userId) {
+        List<Map<String, Object>> rolesMap = new ArrayList<Map<String, Object>>();
+        //List<UserRole> userRoles = new ArrayList<UserRole>();
+
+        List<Role> roles = new ArrayList<Role>();
+        QueryWrapper<Role> queryWrapper = new QueryWrapper<Role>();
+        queryWrapper.eq("is_del", 0);
+//        if(null != userId){
+//            queryWrapper.eq("user_id", userId);
+//        }
+        roles = this.baseMapper.selectList(queryWrapper);
+        for(Role role : roles){
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("roleName", role.getName());
+            map.put("id", role.getId());
+            rolesMap.add(map);
+        }
+        return rolesMap;
+        //return this.baseMapper.queryAllRoles(userId);
     }
 }
