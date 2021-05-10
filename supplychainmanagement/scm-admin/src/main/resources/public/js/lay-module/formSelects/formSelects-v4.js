@@ -27,7 +27,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 	}
 })(typeof layui == 'undefined' ? null : layui, window, function () {
 	var v = '4.0.0.0910',
-	    NAME = 'xm-select',
+	    NAME = 'w',
 	    PNAME = 'xm-select-parent',
 	    INPUT = 'xm-select-input',
 	    TDIV = 'xm-select--suffix',
