@@ -15,7 +15,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">管理账号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="userName" lay-verify="required"  class="layui-input" value="${(user.username)!'xxx'}">
+                    <input type="text" name="userName" lay-verify="required"  class="layui-input" value="${(user.userName)!'xxx'}">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -43,6 +43,7 @@
                     <button class="layui-btn" lay-submit lay-filter="saveBtn">确认保存</button>
                 </div>
             </div>
+<#--            <div>${user}</div>-->
         </div>
     </div>
 </div>

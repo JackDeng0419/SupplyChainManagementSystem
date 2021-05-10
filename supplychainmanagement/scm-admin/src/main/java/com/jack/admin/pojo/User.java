@@ -65,6 +65,9 @@ public class User implements Serializable, UserDetails {
         return userName;
     }
 
+    public String getUserName() {
+        return userName;
+    }
     @Override
     public boolean isAccountNonExpired() {
         return true;

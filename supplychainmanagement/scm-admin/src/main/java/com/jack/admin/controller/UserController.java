@@ -119,4 +119,34 @@ public class UserController {
         return  "user/add_update";
     }
 
+    /**
+     * 新增用户
+     *
+     */
+    @RequestMapping("save")
+    @ResponseBody
+    public RespBean saveUser(User user){
+        userService.saveUser(user);
+        return RespBean.success("用户记录添加成功");
+    }
+
+    /**
+     * 更新用户
+     * @param user
+     * @return
+     */
+    @RequestMapping("update")
+    @ResponseBody
+    public RespBean updateUser(User user){
+        userService.updateUser(user);
+        return RespBean.success("用户记录更新成功");
+    }
+
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean deleteUser(Integer[] ids){
+        userService.deleteUser(ids);
+        return RespBean.success("用户记录删除成功");
+
+    }
 }

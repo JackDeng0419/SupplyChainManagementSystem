@@ -3,7 +3,6 @@ package com.jack.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.jack.admin.pojo.User;
 import com.jack.admin.mapper.UserMapper;
 import com.jack.admin.query.UserQuery;
@@ -15,10 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ import java.util.Map;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Resource
-    private PasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public User findUserByUserName(String userName) {
@@ -55,6 +55,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void updateUserPassword(String userName, String oldPassword, String newPassword, String confirmPassword) {
         //非空检验
         User user = null;
@@ -64,12 +65,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         AssertUtil.isTrue(StringUtil.isEmpty(newPassword), "新密码不能为空");
         //错误判断
         AssertUtil.isTrue(StringUtil.isEmpty(confirmPassword),"请输入确认密码!");
-        AssertUtil.isTrue(!(encoder.matches(oldPassword, user.getPassword())),"原始密码输入错误!");
+        AssertUtil.isTrue(!(passwordEncoder.matches(oldPassword, user.getPassword())),"原始密码输入错误!");
         AssertUtil.isTrue(!(newPassword.equals(confirmPassword)),"新密码输入不一致!");
         AssertUtil.isTrue(newPassword.equals(oldPassword),"新密码与原始密码不能一致!");
 
         //更新密码, 直接调用父类（MyBatis Plus的ServiceImpl）的方法
-        user.setPassword(encoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
         AssertUtil.isTrue(!(this.updateById(user)), "用户密码更新失败");
     }
 
@@ -95,5 +96,47 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         map.put("count",page.getTotal());
 
         return map;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void saveUser(User user) {
+        // 校验
+        //  username非空，不可重复
+        // 设置默认值
+            //密码：123456
+            //is_del=0
+        AssertUtil.isTrue(StringUtil.isEmpty(user.getUsername()), "用户名不能为空");
+        AssertUtil.isTrue(null != this.findUserByUserName(user.getUsername()), "用户名已存在");
+
+        user.setPassword(passwordEncoder.encode("123456"));
+        user.setIsDel(0);
+        AssertUtil.isTrue(!(this.save(user)), "用户记录添加失败");
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void updateUser(User user) {
+        AssertUtil.isTrue(StringUtil.isEmpty(user.getUsername()), "用户名不能为空");
+
+        User temp = this.findUserByUserName(user.getUsername());
+        AssertUtil.isTrue(null != temp && !(temp.getId().equals(user.getId())), "用户名已存在");
+
+        AssertUtil.isTrue(!(this.updateById(user)), "用户记录更新失败");
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void deleteUser(Integer[] ids) {
+        // 判断参数非空
+        AssertUtil.isTrue(null == ids || ids.length==0, "请选择删除的记录id");
+        List<User> users = new ArrayList<User>();
+        for(Integer id : ids){
+            User temp = this.getById(id);
+            temp.setIsDel(1);
+            users.add(temp);
+        }
+        AssertUtil.isTrue(!(this.updateBatchById(users)), "用户记录删除失败");
+
     }
 }
