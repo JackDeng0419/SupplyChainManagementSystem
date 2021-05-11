@@ -135,9 +135,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 List<String> roleNames = rbacService.findRolesByUserName(username);
                 //根据角色名称获取权限码
                 List<String> authorities = rbacService.findAuthoritiesByRoleName(roleNames);
-                System.out.println("权限："+authorities);
+
                 roleNames = roleNames.stream().map(role->"ROLE_"+role).collect(Collectors.toList());
                 authorities.addAll(roleNames);
+                System.out.println("权限："+authorities);
                 userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(String.join(",",authorities)));
                 return userDetails;
             }
