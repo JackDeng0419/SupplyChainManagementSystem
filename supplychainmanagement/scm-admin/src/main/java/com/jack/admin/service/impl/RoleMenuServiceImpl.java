@@ -1,10 +1,15 @@
 package com.jack.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jack.admin.pojo.RoleMenu;
 import com.jack.admin.mapper.RoleMenuMapper;
 import com.jack.admin.service.IRoleMenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jack.admin.utils.AssertUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +22,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> implements IRoleMenuService {
 
+    @Override
+    public List<Integer> queryRoleHasAllMenusByRoleId(Integer roleId) {
+        return this.baseMapper.queryRoleHasAllMenusByRoleId(roleId);
+    }
 }

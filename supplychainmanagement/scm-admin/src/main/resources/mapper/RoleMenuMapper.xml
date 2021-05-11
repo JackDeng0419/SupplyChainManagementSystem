@@ -14,4 +14,10 @@
         id, menu_id, role_id
     </sql>
 
+    <select id="queryRoleHasAllMenusByRoleId" resultType="java.lang.Integer">
+        SELECT menu_id
+        FROM t_role_menu
+        WHERE role_id = #{roleId}
+    </select>
+
 </mapper>
