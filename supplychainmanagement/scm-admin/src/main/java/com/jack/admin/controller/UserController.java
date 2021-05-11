@@ -7,6 +7,7 @@ import com.jack.admin.pojo.User;
 import com.jack.admin.query.UserQuery;
 import com.jack.admin.service.IUserService;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -49,6 +50,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("setting")
+    //@PreAuthorize("hasAnyAuthority('101003')")
     public String setting(Principal principal, Model model){
         User user = userService.findUserByUserName(principal.getName());
         model.addAttribute("user",user);
@@ -94,6 +96,7 @@ public class UserController {
     }
 
     @RequestMapping("index")
+    @PreAuthorize("hasAnyAuthority(1010)")
     public String index(){
         return "user/user";
     }
@@ -106,11 +109,13 @@ public class UserController {
      */
     @RequestMapping("list")
     @ResponseBody
+    @PreAuthorize("hasAnyAuthority('101003')")
     public Map<String, Object> userList(UserQuery userQuery){
         return userService.userList(userQuery);
     }
 
     @RequestMapping("addOrUpdateUserPage")
+    @PreAuthorize("hasAnyAuthority('101004','101005')")
     public String addOrUpdatePage(Integer id, Model model){
         if (null != id){
             // 将user对象放入session

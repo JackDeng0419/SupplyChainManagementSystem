@@ -1,17 +1,21 @@
 package com.jack.admin.config.security;
 
 
+import com.jack.admin.config.ClassPathTldsLoader;
 import com.jack.admin.filters.CaptchaCodeFilter;
 import com.jack.admin.pojo.User;
+import com.jack.admin.service.IRbacService;
 import com.jack.admin.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +27,8 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootConfiguration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -46,6 +52,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     private DataSource dataSource;
+
+    @Resource
+    private IRbacService rbacService;
 
     /**
      * 放行静态资源
@@ -121,6 +130,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 User userDetails = userService.findUserByUserName(username);
+
+                //根据用户名查询角色名称
+                List<String> roleNames = rbacService.findRolesByUserName(username);
+                //根据角色名称获取权限码
+                List<String> authorities = rbacService.findAuthoritiesByRoleName(roleNames);
+                System.out.println("权限："+authorities);
+                roleNames = roleNames.stream().map(role->"ROLE_"+role).collect(Collectors.toList());
+                authorities.addAll(roleNames);
+                userDetails.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(String.join(",",authorities)));
                 return userDetails;
             }
         };
@@ -139,5 +157,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService()).passwordEncoder(encoder());
+    }
+
+    /**
+     * 加载 ClassPathTldsLoader
+     */
+    @Bean
+    @ConditionalOnMissingBean(ClassPathTldsLoader.class)
+    public ClassPathTldsLoader classPathTldsLoader(){
+        return new ClassPathTldsLoader();
     }
 }
