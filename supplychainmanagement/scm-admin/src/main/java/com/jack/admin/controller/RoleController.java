@@ -65,4 +65,17 @@ public class RoleController {
         return RespBean.success("角色删除成功");
     }
 
+    @RequestMapping("toAddGrantPage")
+    public String toAddGrantPage(Integer roleId, Model model){
+        model.addAttribute("roleId", roleId);
+        return "role/grant";
+    }
+
+    @RequestMapping("addGrant")
+    @ResponseBody
+    public RespBean addGrant(Integer roleId, Integer[] mids){
+        roleService.addGrant(roleId, mids);
+        return RespBean.success("角色记录授权成功");
+    }
+
 }
