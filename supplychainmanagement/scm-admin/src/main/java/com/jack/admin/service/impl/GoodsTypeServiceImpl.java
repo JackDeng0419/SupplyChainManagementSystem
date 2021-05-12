@@ -13,6 +13,8 @@ import com.jack.admin.utils.PageResultUtil;
 import com.jack.admin.utils.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +71,7 @@ public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void saveGoodsType(GoodsType goodsType) {
         /**
          * 1.商品类别名称不能为空
@@ -88,6 +91,7 @@ public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void deleteGoodsType(Integer id) {
         /**
          * 1.删除记录必须存在

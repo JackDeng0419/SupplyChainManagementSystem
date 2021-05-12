@@ -46,6 +46,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void updateGoods(Goods goods) {
         checkParams(goods.getName(), goods.getTypeId(), goods.getUnit());
         AssertUtil.isTrue(!(this.updateById(goods)),"记录更新失败!");
@@ -102,5 +103,29 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }else{
             return "0001";
         }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void updateStock(Goods goods) {
+        /**
+         * 商品库存量>0
+         * 商品成本价>0
+         */
+        Goods temp =this.getById(goods.getId());
+        AssertUtil.isTrue(null == goods,"待更新的商品记录不存在!");
+        AssertUtil.isTrue(goods.getInventoryQuantity()<=0,"库存量必须>0");
+        AssertUtil.isTrue(goods.getPurchasingPrice()<=0,"成本价必须>0");
+        AssertUtil.isTrue(!(this.updateById(goods)),"商品更新失败!");
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void deleteStock(Integer id) {
+        Goods temp =this.getById(id);
+        AssertUtil.isTrue(null == temp,"待更新的商品记录不存在!");
+        AssertUtil.isTrue(temp.getState() == 2,"该商品已经发生单据，不可删除!");
+        temp.setInventoryQuantity(0);
+        AssertUtil.isTrue(!(this.updateById(temp)),"商品删除失败!");
     }
 }
