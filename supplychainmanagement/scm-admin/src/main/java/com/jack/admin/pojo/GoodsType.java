@@ -42,4 +42,11 @@ public class GoodsType implements Serializable {
     private String icon;
 
 
+    public Integer getpId() {
+        return pId;
+    }
+
+    public Integer getPId() {
+        return pId;
+    }
 }

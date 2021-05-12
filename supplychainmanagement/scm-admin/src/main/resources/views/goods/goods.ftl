@@ -54,14 +54,14 @@
 									<i class="layui-icon">&#xe608;</i>
 									添加商品
 								</a>
-								<a class="layui-btn layui-btn-normal addNews_btn" lay-event="goodsType">
-									<i class="layui-icon">&#xe608;</i>
-									商品类别
-								</a>
-								<a class="layui-btn layui-btn-normal addNews_btn" lay-event="goodsUnit">
-									<i class="layui-icon">&#xe608;</i>
-									商品单位
-								</a>
+<#--								<a class="layui-btn layui-btn-normal addNews_btn" lay-event="goodsType">-->
+<#--									<i class="layui-icon">&#xe608;</i>-->
+<#--									商品类别-->
+<#--								</a>-->
+<#--								<a class="layui-btn layui-btn-normal addNews_btn" lay-event="goodsUnit">-->
+<#--									<i class="layui-icon">&#xe608;</i>-->
+<#--									商品单位-->
+<#--								</a>-->
 							</div>
 						</script>
 						<#--操作-->

@@ -2,7 +2,11 @@ package com.jack.admin.controller;
 
 
 import com.jack.admin.dto.TreeDto;
+import com.jack.admin.model.RespBean;
+import com.jack.admin.pojo.GoodsType;
 import com.jack.admin.service.IGoodsTypeService;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -32,4 +37,38 @@ public class GoodsTypeController {
         // 此处的typeId用于在商品列表页面中筛选，如果是在普通商品页面，不会用到
         return goodsTypeService.queryAllGoodsTypes(typeId);
     }
+
+    @RequestMapping("index")
+    public String index(){
+        return "goodsType/goods_type";
+    }
+
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String,Object> goodsTypeList(){
+        return goodsTypeService.goodsTypeList();
+    }
+
+    @RequestMapping("addGoodsTypePage")
+    public String addGoodsTypePage(Integer pId, Model model){
+        model.addAttribute("pId",pId);
+        return "goodsType/add";
+    }
+
+    @RequestMapping("save")
+    @ResponseBody
+    public RespBean saveGoodsType(GoodsType goodsType){
+        goodsTypeService.saveGoodsType(goodsType);
+        return RespBean.success("商品类别添加成功");
+    }
+
+
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean deleteGoodsType(Integer id){
+        goodsTypeService.deleteGoodsType(id);
+        return RespBean.success("商品类别删除成功");
+    }
+
+
 }
