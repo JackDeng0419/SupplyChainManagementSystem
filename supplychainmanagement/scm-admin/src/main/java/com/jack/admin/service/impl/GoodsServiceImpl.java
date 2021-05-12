@@ -9,6 +9,7 @@ import com.jack.admin.query.GoodsQuery;
 import com.jack.admin.service.IGoodsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.admin.service.IGoodsTypeService;
+import com.jack.admin.service.IGoodsUnitService;
 import com.jack.admin.utils.AssertUtil;
 import com.jack.admin.utils.PageResultUtil;
 import com.jack.admin.utils.StringUtil;
@@ -31,6 +32,9 @@ import java.util.Map;
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements IGoodsService {
     @Resource
     private IGoodsTypeService goodsTypeService;
+
+    @Resource
+    private IGoodsUnitService goodsUnitService;
 
 
     @Override
@@ -127,5 +131,13 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         AssertUtil.isTrue(temp.getState() == 2,"该商品已经发生单据，不可删除!");
         temp.setInventoryQuantity(0);
         AssertUtil.isTrue(!(this.updateById(temp)),"商品删除失败!");
+    }
+
+    @Override
+    public Goods getGoodsInfoById(Integer gid) {
+        Goods goods = this.getById(gid);
+        goods.setUnitName(goodsUnitService.getById(goods.getUnit()).getName());
+        goods.setTypeName(goodsTypeService.getById(goods.getTypeId()).getName());
+        return goods;
     }
 }

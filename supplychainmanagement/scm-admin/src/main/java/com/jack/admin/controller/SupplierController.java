@@ -1,6 +1,7 @@
 package com.jack.admin.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.Supplier;
 import com.jack.admin.query.SupplierQuery;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,6 +101,16 @@ public class SupplierController {
         return RespBean.success("供应商记录删除成功!");
     }
 
+    /**
+     * 删除供应商
+     * @param ids
+     * @return
+     */
+    @RequestMapping("allGoodsSuppliers")
+    @ResponseBody
+    public List<Supplier> allGoodsSuppliers(){
+        return supplierService.list(new QueryWrapper<Supplier>().eq("is_del", 0));
+    }
 
 
 
