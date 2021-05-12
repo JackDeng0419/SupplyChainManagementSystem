@@ -88,4 +88,16 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
         page =  this.baseMapper.purchaseList(page,purchaseListQuery);
         return PageResultUtil.getResult(page.getTotal(),page.getRecords());
     }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void deletePurchaseList(Integer id) {
+        /**
+         * 1.进货单商品记录删除
+         * 2.进货单记录删除
+         */
+        AssertUtil.isTrue(!(purchaseListGoodsService.remove(new QueryWrapper<PurchaseListGoods>().eq("purchase_list_id",id))),
+                "记录删除失败!");
+        AssertUtil.isTrue(!(this.removeById(id)),"记录删除失败!");
+    }
 }

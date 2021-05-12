@@ -6,10 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jack.admin.pojo.Goods;
 import com.jack.admin.mapper.GoodsMapper;
 import com.jack.admin.query.GoodsQuery;
-import com.jack.admin.service.IGoodsService;
+import com.jack.admin.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jack.admin.service.IGoodsTypeService;
-import com.jack.admin.service.IGoodsUnitService;
 import com.jack.admin.utils.AssertUtil;
 import com.jack.admin.utils.PageResultUtil;
 import com.jack.admin.utils.StringUtil;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +34,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Resource
     private IGoodsUnitService goodsUnitService;
+
+    @Resource
+    private ISaleListGoodsService saleListGoodsService;
+
+    @Resource
+    private ICustomerReturnListGoodsService customerReturnListGoodsService;
 
 
     @Override
@@ -139,5 +144,21 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goods.setUnitName(goodsUnitService.getById(goods.getUnit()).getName());
         goods.setTypeName(goodsTypeService.getById(goods.getTypeId()).getName());
         return goods;
+    }
+
+    @Override
+    public Map<String, Object> stockList(GoodsQuery goodsQuery) {
+        IPage<Goods> page = new Page<Goods>(goodsQuery.getPage(),goodsQuery.getLimit());
+        if(null !=goodsQuery.getTypeId()){
+            goodsQuery.setTypeIds(goodsTypeService.queryAllSubTypeIdsByTypeId(goodsQuery.getTypeId()));
+        }
+        page =  this.baseMapper.queryGoodsByParams(page,goodsQuery);
+
+        List<Goods> goodsList = page.getRecords();
+        goodsList.forEach(g->{
+            g.setSaleTotal(saleListGoodsService.getSaleTotalByGoodsId(g.getId()) -
+                    customerReturnListGoodsService.getReturnTotalByGoodsId(g.getId()));
+        });
+        return PageResultUtil.getResult(page.getTotal(),goodsList);
     }
 }

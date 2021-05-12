@@ -80,4 +80,8 @@ public class Goods implements Serializable {
     @TableField(exist = false)
     private String typeName;
 
+    @ApiModelProperty(value = "销售总数")
+    @TableField(exist = false)
+    private Integer saleTotal;
+
 }

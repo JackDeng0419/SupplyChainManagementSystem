@@ -2,12 +2,15 @@ package com.jack.admin.controller;
 
 import com.jack.admin.model.GoodsModel;
 import com.jack.admin.pojo.Goods;
+import com.jack.admin.query.GoodsQuery;
 import com.jack.admin.service.IGoodsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @Controller
 @RequestMapping("common")
@@ -45,5 +48,20 @@ public class CommonController {
         model.addAttribute("goods",goodsModel);
         model.addAttribute("flag",1);
         return "common/goods_add_update";
+    }
+
+    /**
+     * 当前库存页
+     * @return
+     */
+    @RequestMapping("toGoodsStockPage")
+    public String toGoodsStockPage() {
+        return "common/stock_search";
+    }
+
+    @RequestMapping("stockList")
+    @ResponseBody
+    public Map<String,Object> stockLick(GoodsQuery goodsQuery){
+        return goodsService.stockList(goodsQuery);
     }
 }

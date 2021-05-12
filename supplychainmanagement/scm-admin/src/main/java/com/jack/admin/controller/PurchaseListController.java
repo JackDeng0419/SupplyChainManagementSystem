@@ -81,4 +81,15 @@ public class PurchaseListController {
         return purchaseListService.purchaseList(purchaseListQuery);
     }
 
+    /**
+     * 删除进货单记录
+     * @param id
+     * @return
+     */
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean delete(Integer id){
+        purchaseListService.deletePurchaseList(id);
+        return RespBean.success("删除成功");
+    }
 }
