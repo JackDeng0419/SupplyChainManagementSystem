@@ -54,4 +54,11 @@ public class Menu implements Serializable {
     private Integer isDel;
 
 
+    public Integer getpId() {
+        return pId;
+    }
+
+    public Integer getPId() {
+        return pId;
+    }
 }
