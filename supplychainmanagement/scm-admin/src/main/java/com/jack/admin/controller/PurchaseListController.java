@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.PurchaseList;
 import com.jack.admin.pojo.PurchaseListGoods;
+import com.jack.admin.query.PurchaseListQuery;
 import com.jack.admin.service.IPurchaseListService;
 import com.jack.admin.service.IUserService;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -63,6 +65,20 @@ public class PurchaseListController {
         return RespBean.success("商品进货入库成功");
     }
 
+    /**
+     * 进货单查询页
+     * @return
+     */
+    @RequestMapping("searchPage")
+    public String searchPage(){
+        return "purchase/purchase_search";
+    }
 
+
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String,Object> purchaseList(PurchaseListQuery purchaseListQuery){
+        return purchaseListService.purchaseList(purchaseListQuery);
+    }
 
 }

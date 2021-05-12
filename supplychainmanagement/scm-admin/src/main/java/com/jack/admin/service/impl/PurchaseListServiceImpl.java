@@ -1,16 +1,20 @@
 package com.jack.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jack.admin.pojo.Goods;
 import com.jack.admin.pojo.PurchaseList;
 import com.jack.admin.mapper.PurchaseListMapper;
 import com.jack.admin.pojo.PurchaseListGoods;
+import com.jack.admin.query.PurchaseListQuery;
 import com.jack.admin.service.IGoodsService;
 import com.jack.admin.service.IPurchaseListGoodsService;
 import com.jack.admin.service.IPurchaseListService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jack.admin.utils.AssertUtil;
 import com.jack.admin.utils.DateUtil;
+import com.jack.admin.utils.PageResultUtil;
 import com.jack.admin.utils.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -75,5 +80,12 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
         });
         // 保存plgList
         AssertUtil.isTrue(!(purchaseListGoodsService.saveBatch(plgList)), "记录添加失败");
+    }
+
+    @Override
+    public Map<String, Object> purchaseList(PurchaseListQuery purchaseListQuery) {
+        IPage<PurchaseList> page = new Page<PurchaseList>(purchaseListQuery.getPage(),purchaseListQuery.getLimit());
+        page =  this.baseMapper.purchaseList(page,purchaseListQuery);
+        return PageResultUtil.getResult(page.getTotal(),page.getRecords());
     }
 }

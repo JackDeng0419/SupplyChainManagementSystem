@@ -1,5 +1,6 @@
 package com.jack.admin.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -57,6 +58,12 @@ public class PurchaseList implements Serializable {
 
     @ApiModelProperty(value = "操作用户")
     private Integer userId;
+
+    @TableField(exist = false)
+    private String userName;
+
+    @TableField(exist = false)
+    private String supplierName;
 
 
 }
