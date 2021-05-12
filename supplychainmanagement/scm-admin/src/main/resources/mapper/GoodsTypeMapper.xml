@@ -16,4 +16,9 @@
         id, name, p_id, state, icon
     </sql>
 
+    <select id="queryAllGoodsTypes" resultType="com.jack.admin.dto.TreeDto">
+        select id,name,p_id as pId
+        from t_goods_type
+    </select>
+
 </mapper>

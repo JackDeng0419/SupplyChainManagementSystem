@@ -2,6 +2,9 @@ package com.jack.admin.service;
 
 import com.jack.admin.pojo.Goods;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.jack.admin.query.GoodsQuery;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -13,4 +16,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IGoodsService extends IService<Goods> {
 
+    void saveGoods(Goods goods);
+
+    void updateGoods(Goods goods);
+
+    void deleteGoods(Integer id);
+
+    Map<String, Object> goodsList(GoodsQuery goodsQuery);
+
+    String genGoodsCode();
 }

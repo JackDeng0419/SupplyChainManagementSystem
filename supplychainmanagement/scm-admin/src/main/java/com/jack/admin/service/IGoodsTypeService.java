@@ -1,7 +1,10 @@
 package com.jack.admin.service;
 
+import com.jack.admin.dto.TreeDto;
 import com.jack.admin.pojo.GoodsType;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IGoodsTypeService extends IService<GoodsType> {
 
+    List<Integer> queryAllSubTypeIdsByTypeId(Integer typeId);
+
+    List<TreeDto> queryAllGoodsTypes(Integer typeId);
 }

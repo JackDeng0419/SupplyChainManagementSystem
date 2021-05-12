@@ -1,7 +1,10 @@
 package com.jack.admin.mapper;
 
+import com.jack.admin.dto.TreeDto;
 import com.jack.admin.pojo.GoodsType;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface GoodsTypeMapper extends BaseMapper<GoodsType> {
 
+    List<TreeDto> queryAllGoodsTypes();
 }
