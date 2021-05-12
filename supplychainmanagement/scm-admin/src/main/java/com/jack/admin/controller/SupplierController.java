@@ -1,6 +1,8 @@
 package com.jack.admin.controller;
 
 
+import com.jack.admin.model.RespBean;
+import com.jack.admin.pojo.Supplier;
 import com.jack.admin.query.SupplierQuery;
 import com.jack.admin.service.ISupplierService;
 import org.springframework.ui.Model;
@@ -59,6 +61,42 @@ public class SupplierController {
             model.addAttribute("supplier",supplierService.getById(id));
         }
         return "supplier/add_update";
+    }
+
+    /**
+     * 添加供应商
+     * @param supplier
+     * @return
+     */
+    @RequestMapping("save")
+    @ResponseBody
+    public RespBean saveSupplier(Supplier supplier){
+        supplierService.saveSupplier(supplier);
+        return RespBean.success("供应商记录添加成功!");
+    }
+
+    /**
+     * 更新供应商信息
+     * @param supplier
+     * @return
+     */
+    @RequestMapping("update")
+    @ResponseBody
+    public RespBean updateSupplier(Supplier supplier){
+        supplierService.updateSupplier(supplier);
+        return RespBean.success("供应商记录更新成功!");
+    }
+
+    /**
+     * 删除供应商
+     * @param ids
+     * @return
+     */
+    @RequestMapping("delete")
+    @ResponseBody
+    public RespBean deleteSupplier(Integer[] ids){
+        supplierService.deleteSupplier(ids);
+        return RespBean.success("供应商记录删除成功!");
     }
 
 
