@@ -7,6 +7,7 @@ import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.CustomerReturnList;
 import com.jack.admin.pojo.CustomerReturnListGoods;
 import com.jack.admin.pojo.Goods;
+import com.jack.admin.query.CustomerReturnListQuery;
 import com.jack.admin.service.ICustomerReturnListService;
 import com.jack.admin.service.IUserService;
 import com.jack.admin.service.impl.CustomerReturnListServiceImpl;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -54,4 +56,24 @@ public class CustomerReturnListController {
         return RespBean.success("商品退货入库成功");
     }
 
+    /**
+     * 退货单查询页
+     * @return
+     */
+    @RequestMapping("searchPage")
+    public String searchPage(){
+        return "customerReturn/customer_return_search";
+    }
+
+
+    /**
+     * 退货单列表
+     * @param customerReturnListQuery
+     * @return
+     */
+    @RequestMapping("list")
+    @ResponseBody
+    public Map<String,Object> customerReturnList(CustomerReturnListQuery customerReturnListQuery){
+        return customerReturnListService.customerReturnList(customerReturnListQuery);
+    }
 }

@@ -3,8 +3,10 @@ package com.jack.admin.service;
 import com.jack.admin.pojo.CustomerReturnList;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jack.admin.pojo.CustomerReturnListGoods;
+import com.jack.admin.query.CustomerReturnListQuery;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -19,4 +21,6 @@ public interface ICustomerReturnListService extends IService<CustomerReturnList>
     String getNextCustomerReturnNumber();
 
     void saveCustomerReturnList(CustomerReturnList customerReturnList, List<CustomerReturnListGoods> crlgList);
+
+    Map<String, Object> customerReturnList(CustomerReturnListQuery customerReturnListQuery);
 }
