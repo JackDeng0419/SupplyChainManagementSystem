@@ -83,6 +83,11 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         return this.getOne(new QueryWrapper<Customer>().eq("is_del",0).eq("name",name));
     }
 
+    @Override
+    public List<Customer> allCustomers() {
+        return this.list();
+    }
+
     private void checkParams(String name, String contact, String number) {
         AssertUtil.isTrue(StringUtil.isEmpty(name),"请输入供应商名称!");
         AssertUtil.isTrue(StringUtil.isEmpty(contact),"请输入联系人!");

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,6 +91,12 @@ public class CustomerController {
     public RespBean deleteCustomer(Integer[] ids){
         customerService.deleteCustomer(ids);
         return RespBean.success("客户记录删除成功");
+    }
+
+    @RequestMapping("allCustomers")
+    @ResponseBody
+    public List<Customer> allCustomers(){
+        return customerService.allCustomers();
     }
 
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jack.admin.mapper.SaleListMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.jack.admin.pojo.SaleList">
+        <id column="id" property="id" />
+        <result column="amount_paid" property="amountPaid" />
+        <result column="amount_payable" property="amountPayable" />
+        <result column="remarks" property="remarks" />
+        <result column="sale_date" property="saleDate" />
+        <result column="sale_number" property="saleNumber" />
+        <result column="state" property="state" />
+        <result column="user_id" property="userId" />
+        <result column="customer_id" property="customerId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, amount_paid, amount_payable, remarks, sale_date, sale_number, state, user_id, customer_id
+    </sql>
+
+    <select id="getNextSaleNumber" resultType="java.lang.String">
+        select max(sale_number) as saleNumber
+        from t_sale_list
+        where to_days(sale_date) = to_days(now())
+    </select>
+</mapper>
