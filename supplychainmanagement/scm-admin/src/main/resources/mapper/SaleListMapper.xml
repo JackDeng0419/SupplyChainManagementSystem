@@ -25,4 +25,32 @@
         from t_sale_list
         where to_days(sale_date) = to_days(now())
     </select>
+
+    <select id="saleList" resultType="com.jack.admin.pojo.SaleList">
+        select
+            sl.*,
+            u.user_name AS userName,
+            c.NAME AS customerName
+        from
+            t_sale_list sl
+            left join t_user u ON sl.user_id = u.id
+            left join t_customer c ON sl.customer_id = c.id
+        <where>
+            <if test = "null != saleListQuery.saleNumber and saleListQuery.saleNumber !='' ">
+                sl.sale_number = #{saleListQuery.saleNumber}
+            </if>
+            <if test = "null != saleListQuery.customerId">
+                and sl.customer_id = #{saleListQuery.customerId}
+            </if>
+            <if test="null !=saleListQuery.state">
+                and sl.state = #{saleListQuery.state}
+            </if>
+            <if test="null != saleListQuery.startDate and saleListQuery.startDate !='' ">
+                and sale_date &gt;= #{saleListQuery.startDate}
+            </if>
+            <if test="null !=saleListQuery.endDate and saleListQuery.endDate !='' ">
+                and sale_date &lt;= #{saleListQuery.endDate}
+            </if>
+        </where>
+    </select>
 </mapper>

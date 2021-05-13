@@ -1,7 +1,10 @@
 package com.jack.admin.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jack.admin.pojo.SaleList;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.jack.admin.query.SaleListQuery;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -14,4 +17,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface SaleListMapper extends BaseMapper<SaleList> {
 
     String getNextSaleNumber();
+
+    IPage<SaleList> saleList(IPage<SaleList> page, @Param("saleListQuery") SaleListQuery saleListQuery);
 }

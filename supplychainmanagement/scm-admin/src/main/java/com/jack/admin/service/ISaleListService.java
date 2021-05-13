@@ -1,10 +1,13 @@
 package com.jack.admin.service;
 
+import com.jack.admin.model.RespBean;
 import com.jack.admin.pojo.SaleList;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jack.admin.pojo.SaleListGoods;
+import com.jack.admin.query.SaleListQuery;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -19,4 +22,6 @@ public interface ISaleListService extends IService<SaleList> {
     String getNextSaleNumber();
 
     void saveSaleList(SaleList saleList, List<SaleListGoods> slgList);
+
+    Map<String, Object> saveList(SaleListQuery saleListQuery);
 }

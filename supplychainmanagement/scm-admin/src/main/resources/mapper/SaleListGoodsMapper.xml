@@ -22,4 +22,16 @@
         id, code, model, name, num, price, total, unit, sale_list_id, type_id, goods_id
     </sql>
 
+    <select id="saleListGoodsList" resultType="com.jack.admin.pojo.SaleListGoods">
+        select
+            tslg.*
+        from
+            t_sale_list_goods tslg
+        <where>
+            <if test="null != saleListGoodsQuery.saleListId">
+                tslg.sale_list_id = #{saleListGoodsQuery.saleListId}
+            </if>
+        </where>
+    </select>
+
 </mapper>
