@@ -1,10 +1,14 @@
 package com.jack.admin.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.jack.admin.model.CountResultModel;
+import com.jack.admin.model.SaleCount;
 import com.jack.admin.pojo.SaleList;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jack.admin.query.SaleListQuery;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -19,4 +23,10 @@ public interface SaleListMapper extends BaseMapper<SaleList> {
     String getNextSaleNumber();
 
     IPage<SaleList> saleList(IPage<SaleList> page, @Param("saleListQuery") SaleListQuery saleListQuery);
+
+    Long countSaleTotal(@Param("saleListQuery") SaleListQuery saleListQuery);
+
+    List<CountResultModel> countSaleList(@Param("saleListQuery") SaleListQuery saleListQuery);
+
+    List<SaleCount> countDaySale(@Param("begin") String begin, @Param("end") String end); // test
 }

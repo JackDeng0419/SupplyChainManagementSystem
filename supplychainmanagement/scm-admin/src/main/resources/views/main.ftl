@@ -125,6 +125,8 @@
                             </dd>
                             <dd class="">
                                 <a href="javascript:;" class="layui-menu-tips" data-type="tabAdd" data-tab-mpi="m-p-i-13" data-tab="report/countDaySale" target="_self"><i class="fa fa-tachometer"></i><span class="layui-left-nav"> 按日统计</span></a>
+                            </dd>
+                            <dd>
                                 <a href="javascript:;" class="layui-menu-tips" data-type="tabAdd" data-tab-mpi="m-p-i-13" data-tab="report/countMonthSale" target="_self"><i class="fa fa-tachometer"></i><span class="layui-left-nav"> 按月统计</span></a>
                             </dd>
                         </dl>

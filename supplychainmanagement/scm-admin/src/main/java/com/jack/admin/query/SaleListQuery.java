@@ -2,6 +2,8 @@ package com.jack.admin.query;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class SaleListQuery extends BaseQuery{
     private String saleNumber;
@@ -9,4 +11,11 @@ public class SaleListQuery extends BaseQuery{
     private Integer state;
     private String startDate;
     private String endDate;
+
+    private String goodsName;
+
+    private Integer typeId;
+    private List<Integer> typeIds;
+
+    private Integer index;
 }

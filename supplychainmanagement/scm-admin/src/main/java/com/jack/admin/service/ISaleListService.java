@@ -1,6 +1,7 @@
 package com.jack.admin.service;
 
 import com.jack.admin.model.RespBean;
+import com.jack.admin.model.SaleCount;
 import com.jack.admin.pojo.SaleList;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jack.admin.pojo.SaleListGoods;
@@ -24,4 +25,8 @@ public interface ISaleListService extends IService<SaleList> {
     void saveSaleList(SaleList saleList, List<SaleListGoods> slgList);
 
     Map<String, Object> saveList(SaleListQuery saleListQuery);
+
+    Map<String, Object> countSale(SaleListQuery saleListQuery);
+
+    List<SaleCount> countDaySale(String begin, String end);
 }

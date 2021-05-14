@@ -3,12 +3,14 @@ package com.jack.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jack.admin.model.CountResultModel;
 import com.jack.admin.pojo.Goods;
 import com.jack.admin.pojo.PurchaseList;
 import com.jack.admin.mapper.PurchaseListMapper;
 import com.jack.admin.pojo.PurchaseListGoods;
 import com.jack.admin.query.PurchaseListQuery;
 import com.jack.admin.service.IGoodsService;
+import com.jack.admin.service.IGoodsTypeService;
 import com.jack.admin.service.IPurchaseListGoodsService;
 import com.jack.admin.service.IPurchaseListService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -40,6 +42,9 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
 
     @Resource
     IPurchaseListGoodsService purchaseListGoodsService;
+
+    @Resource
+    IGoodsTypeService goodsTypeService;
 
     @Override
     public String getNextPurchaseNumber() {
@@ -99,5 +104,17 @@ public class PurchaseListServiceImpl extends ServiceImpl<PurchaseListMapper, Pur
         AssertUtil.isTrue(!(purchaseListGoodsService.remove(new QueryWrapper<PurchaseListGoods>().eq("purchase_list_id",id))),
                 "记录删除失败!");
         AssertUtil.isTrue(!(this.removeById(id)),"记录删除失败!");
+    }
+
+    @Override
+    public Map<String, Object> countPurchase(PurchaseListQuery purchaseListQuery) {
+        if(null !=purchaseListQuery.getTypeId()){
+            List<Integer> typeIds= goodsTypeService.queryAllSubTypeIdsByTypeId(purchaseListQuery.getTypeId());
+            purchaseListQuery.setTypeIds(typeIds);
+        }
+        purchaseListQuery.setIndex((purchaseListQuery.getPage()-1)*purchaseListQuery.getLimit());
+        Long count  = this.baseMapper.countPurchaseTotal(purchaseListQuery);
+        List<CountResultModel> list =this.baseMapper.countPurchaseList(purchaseListQuery);
+        return PageResultUtil.getResult(count,list);
     }
 }

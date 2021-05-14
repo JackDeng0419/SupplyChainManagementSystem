@@ -92,4 +92,12 @@ public class PurchaseListController {
         purchaseListService.deletePurchaseList(id);
         return RespBean.success("删除成功");
     }
+
+    @RequestMapping("countPurchase")
+    @ResponseBody
+    public Map<String,Object> countPurchase(PurchaseListQuery purchaseListQuery){
+        return purchaseListService.countPurchase(purchaseListQuery);
+    }
+
+
 }

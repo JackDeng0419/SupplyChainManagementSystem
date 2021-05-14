@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jack.admin.model.RespBean;
+import com.jack.admin.model.SaleCount;
 import com.jack.admin.pojo.SaleList;
 import com.jack.admin.pojo.SaleListGoods;
 import com.jack.admin.pojo.User;
@@ -13,6 +14,7 @@ import com.jack.admin.query.SaleListGoodsQuery;
 import com.jack.admin.query.SaleListQuery;
 import com.jack.admin.service.ISaleListService;
 import com.jack.admin.service.IUserService;
+import com.jack.admin.utils.PageResultUtil;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -72,4 +74,16 @@ public class SaleListController {
         return saleListService.saveList(saleListQuery);
     }
 
+    @RequestMapping("countSale")
+    @ResponseBody
+    public Map<String, Object> countSale(SaleListQuery saleListQuery){
+        return saleListService.countSale(saleListQuery);
+    }
+
+    @RequestMapping("countSaleByDay")
+    @ResponseBody
+    public Map<String, Object> countDaySale(String begin, String end){
+        List<SaleCount> saleCounts = saleListService.countDaySale(begin, end);
+        return PageResultUtil.getResult((long)saleCounts.size(), saleCounts);
+    }
 }

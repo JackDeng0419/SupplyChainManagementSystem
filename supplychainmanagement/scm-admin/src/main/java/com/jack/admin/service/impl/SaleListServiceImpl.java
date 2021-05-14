@@ -3,13 +3,16 @@ package com.jack.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jack.admin.model.CountResultModel;
 import com.jack.admin.model.RespBean;
+import com.jack.admin.model.SaleCount;
 import com.jack.admin.pojo.Goods;
 import com.jack.admin.pojo.SaleList;
 import com.jack.admin.mapper.SaleListMapper;
 import com.jack.admin.pojo.SaleListGoods;
 import com.jack.admin.query.SaleListQuery;
 import com.jack.admin.service.IGoodsService;
+import com.jack.admin.service.IGoodsTypeService;
 import com.jack.admin.service.ISaleListGoodsService;
 import com.jack.admin.service.ISaleListService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,6 +42,9 @@ public class SaleListServiceImpl extends ServiceImpl<SaleListMapper, SaleList> i
 
     @Resource
     ISaleListGoodsService saleListGoodsService;
+
+    @Resource
+    IGoodsTypeService goodsTypeService;
 
     @Override
     public String getNextSaleNumber() {
@@ -83,5 +89,21 @@ public class SaleListServiceImpl extends ServiceImpl<SaleListMapper, SaleList> i
         IPage<SaleList> page = new Page<SaleList>(saleListQuery.getPage(), saleListQuery.getLimit());
         page = this.baseMapper.saleList(page, saleListQuery);
         return PageResultUtil.getResult(page.getSize(), page.getRecords());
+    }
+
+    @Override
+    public Map<String, Object> countSale(SaleListQuery saleListQuery) {
+        if(null != saleListQuery.getTypeId()){
+            saleListQuery.setTypeIds(goodsTypeService.queryAllSubTypeIdsByTypeId(saleListQuery.getTypeId()));
+        }
+        saleListQuery.setIndex((saleListQuery.getPage()-1) * saleListQuery.getLimit());
+        Long count = this.baseMapper.countSaleTotal(saleListQuery);
+        List<CountResultModel> list = this.baseMapper.countSaleList(saleListQuery);
+        return PageResultUtil.getResult(count, list);
+    }
+
+    @Override
+    public List<SaleCount> countDaySale(String begin, String end) {
+        return this.baseMapper.countDaySale(begin, end);
     }
 }
