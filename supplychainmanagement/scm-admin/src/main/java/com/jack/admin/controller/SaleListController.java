@@ -14,6 +14,8 @@ import com.jack.admin.query.SaleListGoodsQuery;
 import com.jack.admin.query.SaleListQuery;
 import com.jack.admin.service.ISaleListService;
 import com.jack.admin.service.IUserService;
+import com.jack.admin.utils.DateUtil;
+import com.jack.admin.utils.MathUtil;
 import com.jack.admin.utils.PageResultUtil;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +87,78 @@ public class SaleListController {
     @RequestMapping("countSaleByDay")
     @ResponseBody
     public Map<String, Object> countDaySale(String begin, String end){
-        List<SaleCount> saleCounts = saleListService.countDaySale(begin, end);
-        return PageResultUtil.getResult((long)saleCounts.size(), saleCounts);
+        Map<String, Object> result = new HashMap<String, Object>();
+        List<SaleCount> saleCounts =  new ArrayList<SaleCount>();
+
+        List<Map<String,Object>> list = saleListService.countDaySale(begin, end);
+
+        List<String> dates = DateUtil.getRangeDates(begin,end);
+        for(String date : dates){
+            SaleCount saleCount = new SaleCount();
+            saleCount.setDate(date);
+            boolean flag = true;// true表示某一天无销售额
+            for(Map<String, Object> map : list){
+                String dd = map.get("saleDate").toString().substring(0, 10);
+                //
+                if(date.equals(dd)){ // 当前存在销售额
+                    saleCount.setAmountCost(MathUtil.format2Bit(Float.parseFloat(map.get("amountCost").toString())));
+                    saleCount.setAmountSale(MathUtil.format2Bit(Float.parseFloat(map.get("amountSale").toString())));
+                    saleCount.setAmountProfit(MathUtil.format2Bit(saleCount.getAmountSale()-saleCount.getAmountCost()));
+                    flag = false;
+                }
+            }
+            if(flag) {
+                saleCount.setAmountProfit(0F);
+                saleCount.setAmountSale(0F);
+                saleCount.setAmountCost(0F);
+            }
+            saleCounts.add(saleCount);
+        }
+
+        result.put("count",saleCounts.size());
+        result.put("data",saleCounts);
+        result.put("code",0);
+        result.put("msg","");
+        return result;
+
+    }
+
+    @RequestMapping("countSaleByMonth")
+    @ResponseBody
+    public Map<String, Object> countMonthSale(String begin, String end){
+        Map<String, Object> result = new HashMap<String, Object>();
+        List<SaleCount> saleCounts =  new ArrayList<SaleCount>();
+
+        List<Map<String,Object>> list = saleListService.countMonthSale(begin, end);
+
+        List<String> dates = DateUtil.getRangeMonth(begin,end);
+        for(String date : dates){
+            SaleCount saleCount = new SaleCount();
+            saleCount.setDate(date);
+            boolean flag = true;// true表示某一天无销售额
+            for(Map<String, Object> map : list){
+                String dd = map.get("saleDate").toString().substring(0, 7);
+                //
+                if(date.equals(dd)){ // 当前存在销售额
+                    saleCount.setAmountCost(MathUtil.format2Bit(Float.parseFloat(map.get("amountCost").toString())));
+                    saleCount.setAmountSale(MathUtil.format2Bit(Float.parseFloat(map.get("amountSale").toString())));
+                    saleCount.setAmountProfit(MathUtil.format2Bit(saleCount.getAmountSale()-saleCount.getAmountCost()));
+                    flag = false;
+                }
+            }
+            if(flag) {
+                saleCount.setAmountProfit(0F);
+                saleCount.setAmountSale(0F);
+                saleCount.setAmountCost(0F);
+            }
+            saleCounts.add(saleCount);
+        }
+
+        result.put("count",saleCounts.size());
+        result.put("data",saleCounts);
+        result.put("code",0);
+        result.put("msg","");
+        return result;
+
     }
 }

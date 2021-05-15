@@ -59,6 +59,8 @@ public class DateUtil {
      * @throws Exception
      */
     public static List<String> getRangeDates(String before,String end){
+        before = before.replaceAll("\"","");
+        end = end.replaceAll("\"","");
         List<String> datas= null;
         try {
             datas = new ArrayList<String>();
@@ -85,6 +87,8 @@ public class DateUtil {
      * @throws Exception
      */
     public static List<String> getRangeMonth(String before,String end){
+        before = before.replaceAll("\"","");
+        end = end.replaceAll("\"","");
         List<String> months= null;
         try {
             months = new ArrayList<String>();
@@ -101,6 +105,21 @@ public class DateUtil {
             e.printStackTrace();
         }
         return months;
+    }
+
+    public static void main(String[] args) throws Exception{
+        String before = "\"2017-10-28\"";
+        String end = "\"2017-11-02\"";
+        before = before.replaceAll("\"","");
+        end = end.replaceAll("\"","");
+        List<String> datas=getRangeDates(before, end);
+        for(String data:datas){
+            System.out.println(data);
+        }
+		/*List<String> months=getRangeMonth("2017-09","2018-12");
+		for(String month:months){
+			System.out.println(month);
+		}*/
     }
 
 }

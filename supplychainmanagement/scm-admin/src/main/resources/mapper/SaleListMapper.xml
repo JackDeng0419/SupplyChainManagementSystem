@@ -123,7 +123,7 @@
         limit  #{saleListQuery.index},#{saleListQuery.limit}
     </select>
 
-    <select id="countDaySale" resultType="com.jack.admin.model.SaleCount">
+    <select id="countDaySale" resultType="java.util.Map">
         select
         <!--成本金额-->
         sum(t3.purchasing_price * t1.num) as amountCost,
@@ -136,5 +136,18 @@
         LEFT JOIN t_goods t3 on t1.goods_id =t3.id
         where t2.sale_date BETWEEN #{begin}	 and #{end}
         GROUP BY t2.sale_date
+    </select>
+
+    <select id="countMonthSale" resultType="java.util.Map">
+        select
+            sum(t3.purchasing_price * t1.num) as amountCost,
+            sum(t1.price * t1.num) as amountSale,
+            DATE_FORMAT(t2.sale_date,"%Y-%m") as saleDate
+        from
+            t_sale_list_goods t1
+                LEFT JOIN t_sale_list t2 on t1.sale_list_id = t2.id
+                LEFT JOIN t_goods t3 on t1.goods_id =t3.id
+        where DATE_FORMAT(t2.sale_date,"%Y-%m") BETWEEN #{begin}	and #{end}
+        GROUP BY DATE_FORMAT(t2.sale_date,"%Y-%m")
     </select>
 </mapper>

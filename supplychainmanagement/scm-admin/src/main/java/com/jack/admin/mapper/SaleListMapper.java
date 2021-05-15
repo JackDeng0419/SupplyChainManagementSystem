@@ -9,6 +9,7 @@ import com.jack.admin.query.SaleListQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -28,5 +29,7 @@ public interface SaleListMapper extends BaseMapper<SaleList> {
 
     List<CountResultModel> countSaleList(@Param("saleListQuery") SaleListQuery saleListQuery);
 
-    List<SaleCount> countDaySale(@Param("begin") String begin, @Param("end") String end); // test
+    List<Map<String,Object>> countDaySale(@Param("begin") String begin, @Param("end") String end );
+
+    List<Map<String, Object>> countMonthSale(String begin, String end);
 }
